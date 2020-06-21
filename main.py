@@ -201,7 +201,7 @@ def callback_inline(call):
         next = types.KeyboardButton(text="Настройки бота")
         keyboard.add(next)
         bot.send_message(chat_id=call.message.chat.id,
-                         text="Вы успешно заполнили категории!😉 \nСкоро Вы начнете получать уведомления о новых "
+                         text="Вы успешно заполнили данные!😉 \nСкоро Вы начнете получать уведомления о новых "
                               "раздачах \n",
                          reply_markup=keyboard)
 
@@ -215,10 +215,27 @@ def callback_inline(call):
                 }
 
                 data = vk_data.get_new_posts(PARAMS)
-                if data is not None:
-                    for post in data:
-                        if len(post) > 0:
-                            bot.send_message(chat_id=call.message.chat.id, text=post[1] + "\nСсылка: " + post[0])
+
+                users = db.ussr()
+                o = 0
+                for i in range(len(users)):
+
+                    search_patterns = []
+
+                    for category, sub_category in vk_data.CATEGORIES.items():
+
+                        if db.check(call.from_user.id, category) == "TRUE":
+                            [search_patterns.append(x) for x in sub_category]
+
+                    cat_data = vk_data.search_food(data, search_patterns)
+                    if cat_data is not None:
+                        for cat_post in cat_data:
+                            # print(cat_post)
+                            if len(cat_post) > 0:
+                                idd = list(users)
+                                # print(idd[int(o)][0])
+                                bot.send_message(chat_id=idd[int(o)][0], text=cat_post[1] + "\nСсылка: " + cat_post[0])
+                                o = o + 1
             time.sleep(60)
 
     # ОБРАБОТКА ТОЛЬКО НАСТРОЕК БОТА
@@ -234,7 +251,7 @@ def callback_inline(call):
 
     if call.data == "edit-novosibirsk":  # выбрали нск:
         keyboardmain = types.InlineKeyboardMarkup(row_width=1)
-        btn1 = types.InlineKeyboardButton(text="Назад", callback_data="save")
+        btn1 = types.InlineKeyboardButton(text="Назад", callback_data="category-finish")
         keyboardmain.add(btn1)
         db.update_city(call.from_user.id, "nsk")
         bot.edit_message_text(chat_id=call.message.chat.id,
@@ -244,7 +261,7 @@ def callback_inline(call):
 
     if call.data == "edit-moscow":  # выбрали нск:
         keyboardmain = types.InlineKeyboardMarkup(row_width=1)
-        btn1 = types.InlineKeyboardButton(text="Назад", callback_data="save")
+        btn1 = types.InlineKeyboardButton(text="Назад", callback_data="category-finish")
         keyboardmain.add(btn1)
         db.update_city(call.from_user.id, "msk")
         bot.edit_message_text(chat_id=call.message.chat.id,
@@ -252,14 +269,6 @@ def callback_inline(call):
                               text="Город изменён на Москва",
                               reply_markup=keyboardmain)
 
-    if call.data == "save":
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-        next = types.KeyboardButton(text="Настройки бота")
-        keyboard.add(next)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-                              message_id=call.message.message_id,
-                              text="Вы успешно изменили данные!😉 \nСкоро Вы начнете получать уведомления о новых "
-                                   "раздачах \n")
 
 
 @bot.message_handler(content_types=['text'])  # Если пришло текстове сообщение

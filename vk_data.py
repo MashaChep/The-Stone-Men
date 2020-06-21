@@ -25,7 +25,7 @@ import os
 import re
 import json
 import requests
-from settings import ACCESS_TOKEN, COUNT, DAYS, DOMAINS, PATTERNS, VK_API_LINK, VK_API_VERSION
+from settings import ACCESS_TOKEN, COUNT, DAYS, DOMAINS, PATTERNS, VK_API_LINK, VK_API_VERSION, CATEGORIES
 
 
 def check_groups(domain):
@@ -44,6 +44,13 @@ def check_groups(domain):
 
 
 def get_new_posts(PARAMS):
+    """Получает новые посты посты группы
+
+            :raises
+
+            :rtype: list
+            :return: список кортежей со статьями [(ссылка, текст),]
+        """
     if check_groups(PARAMS["domain"]):
 
         posts_dict = requests.get(VK_API_LINK, PARAMS).json()['response']['items']
@@ -128,6 +135,3 @@ def search_food(posts_list, search_patterns):
                 break
     if len(search_ads) > 0:
         return search_ads
-
-
-
