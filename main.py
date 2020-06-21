@@ -29,8 +29,8 @@ def start(message):
                      f'и не о чём-то испорченном.\n\nБолее подробно вы можете прочитать в нашей статье {link}')
 
     btn1 = types.InlineKeyboardButton(text="Новосибирск", callback_data="novosibirsk")
-    btn2 = types.InlineKeyboardButton(text="Москва", callback_data="moscow")
-    keyboardmain.add(btn1, btn2)
+    #btn2 = types.InlineKeyboardButton(text="Москва", callback_data="moscow")
+    keyboardmain.add(btn1)
     bot.send_message(message.chat.id,
                      "Выберите город:",
                      parse_mode='html',
@@ -215,26 +215,65 @@ def callback_inline(call):
                 }
 
                 data = vk_data.get_new_posts(PARAMS)
-
-                users = db.ussr()
-                o = 0
-                for i in range(len(users)):
-
-                    search_patterns = []
-
-                    for category, sub_category in vk_data.CATEGORIES.items():
-
-                        if db.check(call.from_user.id, category) == "TRUE":
-                            [search_patterns.append(x) for x in sub_category]
-
-                    cat_data = vk_data.search_food(data, search_patterns)
-                    if cat_data is not None:
-                        for cat_post in cat_data:
-                            # print(cat_post)
-                            if len(cat_post) > 0:
+                if data is not None:
+                    for post in data:
+                        users = db.ussr()
+                        print(users)
+                        o = 0
+                        for i in range(len(users)):
+                            print("Новый пост")
+                            if len(post) > 0:
                                 idd = list(users)
-                                # print(idd[int(o)][0])
-                                bot.send_message(chat_id=idd[int(o)][0], text=cat_post[1] + "\nСсылка: " + cat_post[0])
+                                print("Работаю с пользователем: ")
+                                print(idd[int(o)][0])
+
+                                if (db.check(idd[int(o)][0], "meat") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННО МЯСО
+                                    if "говядина" in post[1] or "корова" in post[1] or "як" in post[1] or "баранина" in post[1] or "свинина" in post[1] or "конина" in post[1] or "козлятина" in post[1] or "колбаса" in post[1] or " сало" in post[1] or "холодец" in post[1] or "фарш" in post[1] or " ветчина" in post[1] or "бекон" in post[1] or "котлеты" in post[1] or "замороженное мясо" in post[1] or "кролик" in post[1] or "полуфабрикат из говядины" in post[1] or "полуфабрикат из свинины" in post[1] or "сосиски" in post[1] or "сардельки" in post[1] or "зельцы" in post[1] or "мясные снеки" in post[1] or "стейк" in post[1]:
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#мясо \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "fish") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННО РЫБА
+                                    if "рыба" in post[1] or "рыбёха" in post[1] or "карась" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О РЫБЕ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#рыба \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "milk") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННО МОЛОЧНАЯ ПРОДУКЦИЯ
+                                    if "молоко" in post[1] or "творог" in post[1] or "молочка" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О МОЛОЧНЫМ ПРОДУКТАМ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#молочные_продукты \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "drinks") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННЫ НАПИТКИ
+                                    if "напитки" in post[1] or "пить" in post[1] or "вода" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О МОЛОЧНЫМ ПРОДУКТАМ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#напитки \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "fruitsandvegetables") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ФРУКТЫ И ОВОЩИ
+                                    if "овощи" in post[1] or "фрукты" in post[1] or "бананы" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О ФРУКТАМ И ОВОЩАМ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#фрукты_и_овощи \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "confection") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННЫ КОНДИТЕРСКИЕ ИЗДЕЛИЯ
+                                    if "кондитерские" in post[1] or "пирог" in post[1] or "печенье" in post[1] or "шоколадка" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О КОНДИТЕРСКИХ ИЗДЕЛИЯХ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#кондитерские_изделия \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "bakery") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННЫ ХЛЕБОБУЛОЧНЫЕ ИЗДЕЛИЯ
+                                    if "хлеб" in post[1] or "булки" in post[1] or "булочки" in post[1] or "шоколадка" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О ХЛЕБОБУЛОЧНЫМ ИЗДЕЛИЯХ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#хлебобулочные_изделия \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "eggs") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННЫ ЯЙЦА
+                                    if "яички" in post[1] or "яйца" in post[1] or "яйца" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О ЯЙЦАХ ИЗДЕЛИЯХ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#яйца \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "bird") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА ВКЛЮЧЕННЫ ЯЙЦА
+                                    if "птица" in post[1] or "курица" in post[1] or "чикенмакнагетс" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О ЯЙЦАХ ИЗДЕЛИЯХ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#птица \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "cereals") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА КРУПЫ МАКАРОНЫ И ТД
+                                    if "каша" in post[1] or "крупа" in post[1] or "гречка" in post[1] or "макароны" in post[1] or "лапшка" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О КРУПЫ МАКАРОНЫ И ТД ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#крупы #макаронные_изделия \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "canned") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА КОНСЕРВЫ
+                                    if "шпроты" in post[1] or "консервы" in post[1] or "шпротная диета" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О КОНСЕРВАХ ПО КЛЮЧЕВЫМ СЛОВАМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#консервы \n\n" + post[1] + "\n\nСсылка: " + post[0])
+
+                                if (db.check(idd[int(o)][0], "other") == "TRUE"):  #ЕСЛИ У ЧЕЛОВЕКА КОНСЕРВЫ
+                                    if "кетчуп" in post[1] or "приправа" in post[1]: #И В ПОСТЕ СОДЕРЖИТСЯ УПОМНИНАНИЕ О ДРУГОМ
+                                        bot.send_message(chat_id=idd[int(o)][0], text="#другое \n\n" + post[1] + "\n\nСсылка: " + post[0])
                                 o = o + 1
             time.sleep(60)
 
@@ -242,8 +281,8 @@ def callback_inline(call):
     if call.data == "edit-city":  # редачим город
         keyboardmain = types.InlineKeyboardMarkup(row_width=2)
         btn1 = types.InlineKeyboardButton(text="Новосибирск", callback_data="edit-novosibirsk")
-        btn2 = types.InlineKeyboardButton(text="Москва", callback_data="edit-moscow")
-        keyboardmain.add(btn1, btn2)
+        #btn2 = types.InlineKeyboardButton(text="Москва", callback_data="edit-moscow")
+        keyboardmain.add(btn1)
         bot.edit_message_text(chat_id=call.message.chat.id,
                               message_id=call.message.message_id,
                               text="Выберите город на который нужно изменить:",
@@ -278,7 +317,7 @@ def mess(message):
         markup = types.InlineKeyboardMarkup(row_width=2)
         btn1 = types.InlineKeyboardButton(text="Изменить категории", callback_data="select-category")
         btn2 = types.InlineKeyboardButton(text="Изменить город", callback_data="edit-city")
-        btn3 = types.InlineKeyboardButton(text="Назад", callback_data="save")
+        btn3 = types.InlineKeyboardButton(text="Назад", callback_data="category-finish")
         markup.add(btn1, btn2, btn3)
         bot.send_message(chat_id=message.chat.id,
                          text="Настройки:",
