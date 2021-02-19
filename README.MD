@@ -5,7 +5,7 @@
 
 • Скачать и установить Python 3.8 версии
   
-• Получить api-ключ для бота telegram в telegram-боте BorFather 
+• Получить api-ключ для бота telegram в telegram-боте BotFather 
 
 • Получить api-ключ приложения ВКонтакте 
 
